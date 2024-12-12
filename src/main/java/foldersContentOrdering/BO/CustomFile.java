@@ -5,13 +5,15 @@ import java.time.LocalDateTime;
 
 import javax.naming.directory.BasicAttributes;
 
+import foldersContentOrdering.CustomFileCreationDateComparator;
+
 /**
  * Classe contenant un fichier et quelques champs que l'on peut trouver dans la classe
  * {@link BasicAttributes} tel que la date de création et la clé unique.
  * @author Sceok
  *
  */
-public class CustomFile {
+public class CustomFile implements Comparable<CustomFile>{
 	File fichier;
 
 	LocalDateTime dateDeCreation;
@@ -66,9 +68,14 @@ public class CustomFile {
 		this.cleUniqueFichier = cleUniqueFichier;
 	}
 
+	public int compareTo(CustomFile customFileParam) {
+		return CustomFileCreationDateComparator.compareStatic(this, customFileParam);
+	}
+
 	@Override
 	public String toString() {
 		return "CustomFile [fichier=" + this.fichier + ", dateDeCreation=" + this.dateDeCreation + ", cleUniqueFichier="
 				+ this.cleUniqueFichier + "]";
 	}
+
 }
