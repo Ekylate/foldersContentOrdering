@@ -6,9 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
-import java.util.stream.Stream;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import foldersContentOrdering.BO.CustomFile;
 import foldersContentOrdering.mapper.CustomFileMapper;
@@ -18,6 +19,8 @@ import foldersContentOrdering.mapper.CustomFileMapper;
  *
  */
 public class FolderOrderingEngine {
+	private static final String ZERO_NUMBER = "0";
+	private static final String UNDERSCORE_SIGN = "_";
 	static CustomFileMapper mapper;
 
 	/**
@@ -42,7 +45,19 @@ public class FolderOrderingEngine {
 			final int nombreDeFichiers = listOfFiles.size();
 			final String numberLength = String.valueOf(nombreDeFichiers);
 //			final Comparator<CustomFile> comparatorOlderOnesFirst = getFilesComparator();
-			final Stream<CustomFile> orderedListOfFiles = listOfFiles.stream().map(f -> mapper.mapFromFileToCustomFile(f, recupererAttributsFichier(f))).sorted();
+			 final List<CustomFile> orderedListOfFiles = listOfFiles.stream().map(f -> mapper.mapFromFileToCustomFile(f, recupererAttributsFichier(f))).sorted().toList();
+			 for(int i=0; i<orderedListOfFiles.size();++i) {
+				 final CustomFile loopFile = orderedListOfFiles.get(i);
+				 final String fileName = loopFile.getFichier().getName();
+				 final String fileAbsolutePath = loopFile.getFichier().getAbsolutePath();
+				 if(fileAbsolutePath.endsWith(fileName)) {
+					 String fileAbsolutePathToWorkOn = StringUtils.removeEnd(fileAbsolutePath, fileName);
+					 final String newFileName = StringUtils.leftPad(String.valueOf(i+1), numberLength.length(), ZERO_NUMBER) + UNDERSCORE_SIGN + fileName ;
+					 fileAbsolutePathToWorkOn  = fileAbsolutePathToWorkOn + newFileName;
+					 final File newFile = new File(fileAbsolutePathToWorkOn);
+					 loopFile.getFichier().renameTo(newFile);
+				 }
+			 }
 		}
 	}
 
