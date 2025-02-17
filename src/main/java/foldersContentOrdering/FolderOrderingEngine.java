@@ -6,9 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 
+import foldersContentOrdering.BO.CustomFile;
 import foldersContentOrdering.mapper.CustomFileMapper;
 
 /**
@@ -38,8 +40,9 @@ public class FolderOrderingEngine {
 		if(FileUtils.isDirectory(dossierDeTravail)) {
 			final Collection<File> listOfFiles = FileUtils.listFiles(dossierDeTravail, null, false);
 			final int nombreDeFichiers = listOfFiles.size();
+			final String numberLength = String.valueOf(nombreDeFichiers);
 //			final Comparator<CustomFile> comparatorOlderOnesFirst = getFilesComparator();
-			listOfFiles.stream().map(f -> mapper.mapFromFileToCustomFile(f, recupererAttributsFichier(f))).sorted();
+			final Stream<CustomFile> orderedListOfFiles = listOfFiles.stream().map(f -> mapper.mapFromFileToCustomFile(f, recupererAttributsFichier(f))).sorted();
 		}
 	}
 
